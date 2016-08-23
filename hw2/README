@@ -1,0 +1,80 @@
+Jerry Chee
+MPCS 51087 hw2
+
+===============================================================================
+Problem 2
+===============================================================================
+
+I am computing the Mandelbrot set in the fixed window W = (-2,2)x(-2,2) in R^2. 
+
+The executable (./mandelbrot N K T) needs 3 arguments.
+N is the number of ways along 1 axis that you want W to be divided.
+K is the chunk size for the dynamic decomposition (given in number of rows).
+T is 1 if you want timing to be performed
+	is 0 if you want just the mandelbrot count data to be printed out
+
+
+(a) predetermined data decomposition:
+I refer to the static decomposition as the predetermined
+data decomposition because the window is decomposed at the beginning of 
+the computation and each processor is assigned a fixed amount of work
+to do. Processors 0 to nprocs-1 receive the n = integer floor of 
+10,000 / nprocs, and processor nprocs receives  (n + 10,000 mod nprocs)
+rows to account for the case that 10,000 is not divisible by nprocs. Each
+processor saves all of its data to an array, and when all processors
+are done each processor takes a turn writing out to a single file.
+
+(b) master-slave algorithm
+The master doles out work to the slaves as the become free, other than
+this scheduling the master does not do any work.
+I refer to the dynamic decomposition
+as the master-slave algorithm because during runtime the algorithm
+doles out tasks as workers become free, and thus decomposes the 
+window dynamically. I make the chunksize 100 rows (with 10,000 elements in 
+each row). For each job that the slave receives, it saves all of the counts
+in an array and prints them out to a file right after the job is finished,
+so that it does not need to have more than one job worth of data in memory.
+
+(c) simulation
+I end timing before the data is writen out to a file (in the case of the 
+master-slave algorithm when it writes out to files throughout runtime,
+I do not write to file when in timing the functions but simply save to
+an array. I turn off all optimizations to ensure that all my code is run). 
+
+(d) plotting
+note: I am constructing the plot from the static decomposition version. 
+			My code can produce data for the dynamic version but I choose to use
+			the static decomposition generated because the hw did not specify 
+			which one to use.
+
+analysis of plot: I do not include a plot for 1 processor because the 
+master-slave alogirthm cannot work wit h1 processor. Thus it does not 
+make sense to include 1 processor timing for just the predetermined decomp
+algorithm, because there is not data point for 1 processor in the 
+master-slave algorithm to compare to. We see that the dynamic decomposition
+performs the computation at a faster rate for all processor values,
+which is expected because it is more efficient at load balancing. We also
+see that the computation times level off as the number of processors
+increase, which is also expected because at a certain point the fixed 
+problem size does not benefit from more processors.  
+
+===============================================================================
+Problem 3
+===============================================================================
+
+I measured the amount of time it took data to make a roundway trip from
+processor 0 to processor 1 (across nodes) given an increasing number of
+bytes. I performed 1000 trials for each number of bytes I timed to 
+make a roudnway trip from 0proc to 1proc back to 0proc to account for
+variability in message sending times. I trasmitted from 8 bytes to 
+2^26 = 67108864 bytes. My plot has log scale and compares number of bytes
+transmitted to the rate of bytes transmitted per second.
+We see that as the number of bytes are increasing, initially the 
+bytes per second that can be transmitted are increasing. Around 2^15 bytes 
+the transmission rate of bytes per second begins to level off. It levels
+off around 2^31 bytes per second. Thus we see that the bandwidth is 
+approximately 2^31 bytes per second. For 8 bytes of data, the round trip
+time for the data to be sent from the 0 processor to the 1 processor and 
+back is 0.000003, or 2775387 bytes per second. Thus my simulation shows
+that the latency is approximately 0.000003 second delay (for an 8 byte
+size of data to be roundtrip transmitted).  

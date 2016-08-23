@@ -1,0 +1,43 @@
+# parallel simple-mc
+A parallelized mini-app that extracts the key features of Monte Carlo neutron transport
+
+===============================================================================
+Constraints:
+The number of worker proccessors must be a power of 3, where the total number of processors is the master plus the worker proccessors.
+The number of workers must be greater than 1, in order for the transfer of particles between worker processors to work.
+The number of bins in each dimension of the mesh must be divisible by the cube root of the number of workers.
+
+===============================================================================
+Summary of Code:
+I parallelized the simple-mc code by simple domain decomposition. I will give a quick runthrough of how the code works, then I will give an analysis showing how the code performs with increasing MPI processes.
+The highest rank processor is designated the master, and the rest are  designated workers. Note that the number of workers must be a power of 3. The master keeps a copy of a global source and fission bank, and the master calculates keff as well. The function source_scatter() distributes the particles in the global source bank to the local sources banks that the wokers caryy. I created a custom MPI datatype (which I named MPI_Particle) to send the Particle struct. There is a varible buff_lim in main.c which determines the number of particles sent and received in a single MPI call. transport_loc() is a re-written version of the tranposrt() function. transport_loc() accounts for the momvemnt of particles between processors. In transport.c I have written various functions to perform coordinate transforms between the worker processors and the master processor. The particles in each worker processor are relaive to the processor they are in. When a particle is moved across worker proccesses, it must be transformed to global coordinates, and then back to local coordinates of its proccessor destination. The particles are not immediately moved between proccessors, however. They are put in a buffer data structure which I have written. When all particles are done being transported (going through collisions) locally, the particles in all buffers are moved to their destinations. Because it is not known apriori where a particle will be moved to, each worker processor must take its turn to communicate to all other worker processors. This cycle of local collisions and particle transfers between worker processors continues until there are no particles to be transfered among any of the workers. fission_gather() is then called to collect the local fission banks of all worker processors to the global fission bank held by the master. The serial version of synchronize_bank() is then called, and this process is continued for however many generations and batches are designated. 
+
+===============================================================================
+Scalability Analysis:
+These variables were held constant: 
+particles=10000000
+batches=1
+generations=1
+active=1
+nuclides=1
+tally=true
+seed=1
+nu=2.5
+xs_f=0.012
+xs_a=0.03
+xs_s=0.27
+bc=reflective
+x=400
+y=400
+z=400
+write_tally=false
+write_keff=false
+tally_file=tally.dat
+keff_file=keff.dat
+
+These variables were varied:
+bins. In order to satisfy divisibility constraints of the code.
+
+We did not get the expected speedup over the serial version of the code. My communication routine between worker processors to transfer particles is 100% serial because I do not know a priori where particles will be exchanged. This may incur a slowdown. 
+I include a table in data that shows the details of my simulation runs. While the times are not what was expected, the keff values are accurate up to 2 decimal places.
+What was expected was a significant speedup with the increase of processors given a fixed problem size (number of particles), until a certain point where the overhead of creating additional processors became greater than the amount of worker each processor was assigned.   

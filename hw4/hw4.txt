@@ -1,0 +1,30 @@
+Homework 4
+due: March 4, 2016 (by midnight)
+
+===============================================================================
+GENERAL INSTRUCTIONS: 
+===============================================================================
+
+Makefiles and a readme are required.  If your problem doesn't compile
+successfully, you will get no credit.  Please make sure your program compiles
+and runs on Midway, and please gather all your benchmark data from Midway
+Including an sbatch script with your homework is greatly appreciated.  To
+submit your assignment:
+
+  (1) Please compress everything into a single archive named
+      "mpcs51087_hw3_cnetid.tar.gz", substituting your own CNET id
+
+  (2) Please email your archive to all the TAs (rahaman@gmail.com,
+      nabaskes@gmail.com) and make the subject line "[MPCS 51087] hw3 cnetid"
+
+===============================================================================
+
+1. Parallelize SimpleMC using OpenMP.  The tallies and source bank should be
+shared between all threads (i.e., they should only be allocated once).  Each
+thread may have its own fission bank; if so, at the end of each generation,
+the shared source bank should be synchronized from all the private fission
+banks.  
+
+2. Present scaling studies for both 'static' and 'dynamic' scheduling using a
+single node on Midway.  Explain your observations (Was one schedule
+significantly more efficient than the other?  Why or why not?)

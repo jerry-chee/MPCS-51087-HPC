@@ -1,0 +1,71 @@
+MPCS 51087
+Homework 2
+due: Feb. 8, 2016 (by 5:00pm)
+
+===============================================================================
+GENERAL INSTRUCTIONS: 
+===============================================================================
+
+Makefiles and a readme are required.  If your problem doesn't compile
+successfully, you will get no credit.  Please make sure your program compiles
+and runs on Midway, and please gather all your benchmark data from Midway
+(however, we recommend that you develop and debug on your local machine).
+Including an sbatch script with your homework is greatly appreciated.  To
+submit your assignment:
+
+  (1) Please compress everything into a single archive named
+      "mpcs51087_hw2_cnetid.tar.gz", substituting your own CNET id
+
+  (2) Please email your archive to all the TAs (rahaman@gmail.com,
+      nabaskes@gmail.com) and make the subject line "[MPCS 51087] hw2 cnetid"
+
+===============================================================================
+Problem 1.
+===============================================================================
+
+Install/test MPICH2 on your personal machine.  Source is available
+https://www.mpich.org/.  It may also be available in your operating systems's
+package manager.  
+
+This will be used for most of your code development testing. It can be run as
+an emulator and doesn't require HPC hardware.  By running mpiexec, then you
+can
+emulate as many processes as you want on your local machine, 
+
+===============================================================================
+Problem 2.
+===============================================================================
+
+Write an MPI program to generate the Mandelbrot Set using two
+strategies:
+
+  (a) predetermined data decomposition -- that is, each processor is assigned
+a
+  chunk of c's to compute at startup.
+
+  (b) using a master-slave algorithm -- that is, a designated _master_
+  processor doles out chunks of c's to worker processors dynamically as the
+  processors become available, with the chunksize input as a user parameter to
+  the algorithm (see lecture 2 notes).
+
+Architect strategies (1) and (2) within a single code that accepts the
+strategy
+as an input parameter.  *** In both strategies, no node should have the entire
+matrix in memory.  That is, each node should only have its subdomain in
+memory.
+
+  (c) Show a plot of your time to solution for a fixed image size of 10,000 x
+  10,000 using 1,2,4,8,16, and 32 processing cores on Midway for both the
+  dynamic and statically decomposed algorithm.
+
+  (d) Finally, include an image of your Mandelbrot set (using any plotting
+tool
+  -- matlab, gnuplot, matplotlib, R, excel, etc.).
+
+===============================================================================
+Problem 3.
+===============================================================================
+
+Write a simple program to test the (a) latency and (b) bandwidth of
+MPI_Send/Recv between a pair of nodes. Run the test on Midway and provide your
+results in a separate plot. Submit both code and plot. 

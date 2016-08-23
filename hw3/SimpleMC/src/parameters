@@ -1,0 +1,70 @@
+###################################################################
+# SIMPLE-MC INPUT PARAMETERS
+###################################################################
+
+# particles: number of particles to simulate
+#particles=1000000
+particles=10
+
+# batches: number of batches
+#batches=10
+batches=1
+
+# generations: number of generations per batch
+generations=1
+
+# active: number of active batches
+#active=10
+active=1
+
+# nuclides: number of nuclides in material
+nuclides=1
+
+# tally: whether to tally
+tally=true
+
+# bins: number of bins in each dimension of mesh
+bins=16
+#bins=9
+
+# seed: RNG seed
+seed=1
+
+# nu: average number of fission neutrons produced
+nu=2.5
+
+# xs_f: fission macroscopic cross section of material
+xs_f=0.012
+
+# xs_a: absorption macroscopic cross section of material
+xs_a=0.03
+
+# xs_s: scattering macroscopic cross section of material
+xs_s=0.27
+
+# bc: boundary conditions (vacuum, reflective, periodic)
+bc=reflective
+
+# x: length of domain in x dimension
+x=400
+#x=1
+
+# y: length of domain in y dimension
+y=400
+#y=1
+
+# z: length of domain in z dimension
+z=400
+#z=1
+
+# write_tally: whether to output tallies
+write_tally=false
+
+# write_keff: whether to output keff
+write_keff=false
+
+# tally_file: path to tally output
+tally_file=tally.dat
+
+# keff_file: path to keff output
+keff_file=keff.dat

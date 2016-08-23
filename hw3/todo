@@ -1,0 +1,73 @@
+The main datastructures: 
+
+Parameters (L, G)
+	G: stores the problem parameters
+	L: stores the problem parameters per proc
+			note: I hope that n_particles remains constant
+	new function: void parse_parameters_loc(Parameters *parameters_loc); 
+	
+Particle (L)
+	created MPI_Particle struct 
+
+Bank (L, G?)
+	init_bank(), init_source_bank(), and init_fission_bank() dont need to
+	be modified bc I have already changed parse_parameters()
+
+Geometry (L)
+	init_geometry() doesn't need to be modified bc I have already 
+	changed parse_parameters()
+
+Material (L)
+	init_material() doesn't need to be modified bc I have already 
+	changed parse_parameters()
+
+Nuclide (G)
+	init_nuclide() doesn't need to be modified bc I have already 
+	changed parse_parameters()
+
+Tally (L)
+	init_tally() doesn't need to be modified bc I have already 
+	changed parse_parameters()
+
+I need to write:
+	MAKE master = nprocs;
+	relative placement of all procs. For now the distribution of procs
+	is row major ordering starting from the top left, going from
+	each verticle slice of the matrix through z.
+		for now let nprocs = i^3 where (n_bins % i == 0)
+	[x]*_lvl_mype() takes mype and give their x,y,z pos along each axis 
+		(by proc region)
+	[x]mype_from_lvls() lookup mype given x,y,z along each axis 
+		(by proc region)
+	[x]interior() which determines whether interior region or not
+		based on mype	
+	[x]exterior_surface() to determine if a particle is moved to
+		either an interior surface, or to which exterior surface
+	[x]buffer struct and functions to store out of bound particles
+	[x]modify cross_surface()
+	[ ]check that loc->global->loc&mype process in cross_surface_loc()
+		is good
+	[x]modify transport()
+	[ ]communication routine in parallel run_eigenvalue(). will call modified
+		run_eignevalue() as subroutine
+	[ ]scatter global src_bank on 0proc to all other procs
+		from buffer struct
+		[x]fixed--GETTING A SEG FAULT WHY
+		MPI_Finalize() hangs->because of sometihng in source_scater()
+	[ ]master needs to send out d_proc;
+	[ ]gather local fission_banks into global src_bank
+	[ ]how to tally particles?
+	[ ]I need to verify that correct things are being sent
+
+	[ ]segfaults when greater than 1 batch or generation
+	
+Note: NEED TO FIX NPROCS VS N_WORkeRS
+n_bins must be divisible by n_workers_axis
+cube, gx=gy=gz
+
+confused why I need this
+gx must be divisible by nprocs
+gy must be divisible by nprocs
+gz must be divisible by nprocs
+BUT I guess it'd be better if I accounted for the case where 
+		these parameter variables are not divisible by nprocs.

@@ -1,0 +1,4 @@
+simpson openmp integral:0.232877, n:1, time:0.006672
+simpson openmp integral:0.232332, n:3, time:0.002936
+simpson openmp integral:0.232323, n:9, time:0.085760
+simpson openmp integral:0.232323, n:27, time:12.324501

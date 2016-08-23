@@ -1,0 +1,42 @@
+Jerry Chee
+hw1
+README
+=======================
+Problem 1:
+hw1_p1.c includes all code for problem 1. It includes all functions and the 
+code for running the matrix multiplication functions on different sizes, 
+timing them, and outputting the data to a csv. The 3 matrix multiplication 
+functions are called mmx_naive(), mmx_blocking(), and mmx_recursive(). 
+There are additional functions to allocate memory, as well as functions
+to print matrices, compare their values, and fill them with integers.  
+There is also a timing function which times the mmx function passed 
+to it.
+
+The funtions run_1(), run_2(), and run_3() are used to run the simulations 
+to get the data for the plots (1), (2), and (3) listed on the assignment.
+
+sandyb:
+	L1 cache: 32K
+	L2 cache: 256K
+	L3 cache: 20480K
+
+using the cblas_dgemm() function for BLAS matrix multiplication. 
+
+Must load modules intel, mkl in order to compile with icc compiler.
+
+=======================
+Problem 2:
+hw1_p2.c includes all code for problem 2. The high q function is a loop
+where the same long int (named data) is squared and then divided by itself. 
+Because parenthesis are put around (data * data), their operation is 
+performed first and thus there is no automatic reduction. The compiler flag 
+-O0 has also been set. 
+
+There should be at most two loads from slow memory, one for data and the 
+other for the index variable for the for loop. The input sizes range from
+10^6 to 10^8. The number of flops should be twice the input. I am 
+assuming that the data and index variables stay in fast memory (L1 Cache) 
+once I load them because my program is using no other memory, the memory
+size of data and the index should not exceed 32K. 
+
+We see that the high q function scales linearly with input size.  

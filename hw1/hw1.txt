@@ -1,0 +1,100 @@
+MPCS 51087
+Homework 1
+due: Jan. 18, 2016 (by end of the day, at midnight)
+
+===============================================================================
+GENERAL INSTRUCTIONS: 
+===============================================================================
+
+A readme and makefiles (or equivalent build scripts) are required.  If your
+problem doesn't compile successfully, you will get no credit.  Please make
+sure
+your program compiles and runs on Midway, and please gather all your benchmark
+data from Midway.  Including an sbatch script with your homework is greatly
+appreciated.  To submit your assignment:
+
+  (1) Please compress everything into a single archive named
+      "mpcs51087_hw1_cnetid.tar.gz", substituting your own CNET id
+
+  (2) Please email your archive to both the TA and grader
+      (rahaman@uchicago.edu, nabaskes@gmail.com) and make the subject line
+      "[MPCS 51087] hw1"
+
+===============================================================================
+Problem 1.
+===============================================================================
+
+Write three different matrix-matrix product subroutines using the following
+strategies:
+
+  - naive (triple loop as in PCE1) 
+  - tiling 
+  - recursive "cache oblivious" algorithm 
+
+For all methods, assume square matrices for simplicity.  For the tiling and
+recursive methods, you may assume square blocks and you may assume that the
+matrices are evenly divisible into square blocks.  
+
+Make sure that the three subroutines have the same interface and are called
+from the same driver.  For example, the interfaces may be:
+
+    // In C/C++
+    void mmx(double **A, double **B, double **C, int n, int bs);
+
+    ! In F90
+    interface
+      subroutine mmx(A, B, C, n, bsx, bsy)
+        double precision, intent(in)  :: A(:), B(:)
+        double precision, intent(out) :: C(:)
+        integer, intent(in)           :: n, bs
+      end subroutine mmx
+    end interface
+
+where A, B, and C are an n x n matrices; where A and B are operands are C is
+the result (A*B = C); and where bs x bs is the size of a block in the tiling
+algorithm and the size of the minimum problem in the recusive algorithm.  For
+the naive algorithm, use the same interface but ignore the value of bs.  
+
+Your driver should run a problem for all three methods, plus a problem with
+netlib dgemm subroutine (netlib.org).  
+
+Also submit three separate plots of timing data:
+
+  (1) For all four methods (naive, tiling, recusrive, dgemm), plot times with
+      a broad range of n, including 3*n^2 < L1_cache all the way to 3*n^2 >>
+      L3_cache.  Choose a fixed block size for the tiling algorithm; and a
+      fixed minimum problem size for the recursive method.
+
+  (2) For the tiling method, plot times with fixed n and variable block size.
+
+  (3) For the recursive method, plot times with fixed n and variable minimum
+      problem size.
+
+You will graded mostly on whether your implementation is correct,
+follows the concepts of lecture 1, and the quality of your
+presentation of your results.  The performance of your algorithm and
+the quality of the coding can also affect your grade, but to a lesser
+extent.
+
+NOTE: Do not base your routine on any published code! In fact, do not
+even look at any published solutions until after you have submitted
+the assignment. It is very important to work only from the basic
+concepts of lecture 2. Any borrowing of code will result in zero
+credit. At the same time, full credit can be received for a less
+efficient algorithm that is cleanly presented, well coded, and
+reasonably efficient, following the basic principle of lecture 2.
+
+===============================================================================
+Problem 2.
+===============================================================================
+
+Identify or invent a simple loop (or nested loops) with a high value of q.
+Code
+it and measure/plot its performance for a broad range of problem sizes.
+Explain
+your observed results w/ respect to expected computational intensity, machine
+specifications, etc.
+
+Careful -- be sure that the compiler has not optimized out unnecessary
+operations (ie that the flops are actually being computed).  One way to ensure
+this is to use the -O0 flag when compiling.  

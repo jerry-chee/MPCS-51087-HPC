@@ -1,0 +1,179 @@
+Description--------------------------------------------------------------------
+
+simple-mc is a very basic app meant to extract the key features of Monte Carlo
+neutron transport. It performs an eigenvalue (criticality) calculation on a
+homogenous cube reactor with monoenergetic particles. Two quantities of
+interest are produced in the simulation: a tally of the scalor flux of
+neutrons (which corresponds to the spatial distribution of particles in the
+reactor) and the effective multiplication factor keff.
+
+In an eigenvalue calculation, particles are grouped into batches. The algorithm
+iterates over batches and within each batch iteration loops over the particles
+in that batch. At the beginning of a batch iteration, the source bank contains
+all the particles that must be tracked from birth to death. Particles are taken
+one by one from the source bank and moved from interaction to interaction until
+they are either absorbed or escape from the domain. If a particle undergoes a
+fission reaction, any new particles produced in the reaction are added to the
+fission bank and the particle history is terminated. After all N source
+particles in this batch have been simulated, the fission bank becomes the
+source bank for the next batch. To ensure that the number of neutrons in the
+source bank does not grow or shrink exponentially, N particles are randomly
+sampled from the M particles in the fission bank and added to the new source
+bank. The ratio of the number of fission neutrons produced to the number of
+source neutrons is the effective multiplication factor keff, which indicates
+how far the system is from criticality (a critical system has keff = 1). 
+
+Another objective of the simulation is to determine the distribution of
+neutrons in the domain. This is achieved here by calculating the scalar flux
+each time a batch of particles is simulated. The domain is discretized into
+spatial bins, and when a particle has a collision within a bin the flux in that
+bin is increased accordingly.
+
+Data Structures----------------------------------------------------------------
+
+Parameters:
+This structure contains all the user defined parameters for the simulation.
+These parameters can be set in the “parameters” file, which contains the
+default parameters and a description of each one, or as command line input.
+
+Particle:
+The particle data structure stores the physical attributes of a particle: its
+position, direction, whether it is is alive, and which surface of the domain it
+crossed if it reached a boundary.
+
+Bank
+The bank data structure is used to store the particles in each batch. Its
+members include an array of particles, the size of the array, and the number of
+particles in the array. There are two particle banks used in the simulation:
+the source bank and the fission bank.
+
+Geometry:
+The geometry for this problem is a homogenous cube. This structure defines the
+physical length of the domain in each dimension and the boundary conditions
+(vacuum, reflective, or periodic).
+
+Material:
+The cube geometry is filled with a single material which is composed of one or
+more nuclides. The nuclides present in the material are stored in an array.
+This structure also contains the fission, absorption, scattering, and total
+macroscopic cross sections of the material and the number of nuclides in the
+material.
+
+Nuclide:
+The nuclide data structure stores the fission, absorption, scattering, and
+total microscopic cross sections of the nuclide and the atomic density of the
+nuclide in the material.
+
+Tally
+The tally data structure contains an array of size n_bins to store the flux
+(where n_bins is the total number of bins in the spatially discretized domain).
+This array is written out at the end of each active batch (batch in which
+tallies are scored) and zeroed out before the next active batch. The structure
+also stores the number of bins in each dimension, the grid spacing, and a flag
+to indicate whether tallying is currently turned on.
+
+Compilation--------------------------------------------------------------------
+
+To compile simple-mc, use the following command:
+
+  >$ make
+
+Running------------------------------------------------------------------------
+
+To run simple-mc with default settings, use the following command:
+
+  >$ ./transport
+
+Settings for simple-mc can be changed in the parameters file or on the command
+line. The default parameters are chosen to represent a critical full core PWR.
+
+  Usage: ./transport <options>
+
+  Options include:
+
+  -particles <unsigned long>
+
+    Total number of particles to simulate per generation (i.e., the number of
+    particles in the source bank).
+
+  -batches <int>
+
+    Total number of batches in simulation.
+
+  -active <int>
+
+    Total number of active batches in simulation. Active batches are batches
+    where tallies are turned on. The number of active batches must be fewer
+    than the total number of batches.
+
+  -generations <int>
+
+    The number of generations to run in each batch. This should be set to 1 as
+    batching has not been fully implemented (i.e., each batch should consist of
+    a single generation).
+
+  -nuclides <int>
+
+    The number of nuclides in the material.
+
+  -tally <true/false>
+
+    Whether or not to score tallies. The tally currently implemented is scalar
+    flux using a collision estimator.
+
+  -bins <int>
+
+    The number of bins in each dimension of the tally mesh.
+
+  -seed <unsigned long long>
+
+    Initial seed for the random number generator.
+
+  -nu <double>
+
+    Average number of fission neutrons produced in a fission reaction.
+
+  -xs_f <double>
+
+    Total fission macroscopic cross section of the material.
+
+  -xs_a <double>
+
+    Total absorption macroscopic cross section of the material.
+
+  -xs_s <double>
+
+    Total scattering macroscopic cross section of the material.
+
+  -bc <vacuum/reflective/periodic>
+
+    Boundary conditions of the problem. Vacuum, reflective, and periodic
+    boundary conditions are supported.
+
+  -x <int>
+
+    Physical length of the domain in x.
+
+  -y <int>
+
+    Physical length of the domain in y.
+
+  -z <int>
+
+    Physical length of the domain in z.
+
+  -write_tally <true/false>
+
+    Whether to output tallies at the end of each active batch.
+
+  -write_keff <true/false>
+
+    Whether to output k effective. 
+
+  -tally_file <char*>
+
+    Path to the file to write tallies to.
+
+  -keff_file <char*> 
+
+    Path to the file to write k effective to.

@@ -1,0 +1,18 @@
+Jerry Chee
+Homework 5
+
+I will briefly describe how I coded each of the following parts othe assignment, then I will describe the execution time and error as a function of the problem size. 
+
+1. Simpsons rule OpenMP
+I modified the example 2d simpsons code given to us which manually calculates the edge weights, and I increased the integration to 5 dimensions. I parallelized the main loop of the code using an omp parallel for directive. 
+
+2. Monte Carlo OpenMP
+I modified the example montecarlo code by parallelizing the main loop using an omp parallel for directive.
+
+3. Simpsons rule CUDA
+On the host I populated an array which contained index information on the mesh over the domain of the integral; it contained the index information of the for loops used in the simpsons openmp implementation. I moved this data over to the device. On the device I calculated the coordinates of the mesh over the domain of the integral, and computed the function at various points, summing first over threads in a block and then over blocks. 
+
+4. Monte Carlo CUDA 
+I generated random numbers on the host and moved them onto the device. I then on the device evaluated the function at these random points, and then summed over threads in a block and then over blocks. 
+
+
